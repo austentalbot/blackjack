@@ -9,33 +9,24 @@ window.AppView = (function(_super) {
     return AppView.__super__.constructor.apply(this, arguments);
   }
 
-  AppView.prototype.template = _.template('<div class="buttons"> <div class="hit-button">Hit</div> <div class="stand-button">Stand</div> <div class="inc-button">Increase Bet $5</div> <div class="dec-button">Decrease Bet $5</div> <div class="bet"></div> </div> <div class="scores myScore"></div> <div class="scores dealerScore"></div> <div class="scores money"></div> <div class="player-hand-container"></div> <div class="dealer-hand-container"></div>');
+  AppView.prototype.template = _.template('<div class="buttons"> <div class="hit-button">Hit</div> <div class="stand-button">Stand</div> <div class="inc-button active">Increase Bet $5</div> <div class="dec-button active">Decrease Bet $5</div> <div class="bet"></div> </div> <div class="playerView"> <div class="scores myScore"></div> <div class="scores dealerScore"></div> <div class="scores money"></div> <div class="player-hand-container"></div> <div class="dealer-hand-container"></div> </div>');
 
   AppView.prototype.events = {
     "click .hit-button": function() {
+      $('.inc-button').removeClass('active');
+      $('.dec-button').removeClass('active');
       return this.model.get('playerHand').hit();
     },
     "click .stand-button": function() {
+      $('.inc-button').removeClass('active');
+      $('.dec-button').removeClass('active');
       return this.model.get('playerHand').stand();
     },
-    "click .inc-button": function() {
-      var currBet, totMoney;
-      currBet = this.model.get('bet');
-      totMoney = this.model.get('money');
-      currBet += 5;
-      if (currBet > totMoney) {
-        currBet = totMoney;
-      }
-      return this.model.set('bet', currBet);
+    "click .inc-button.active": function() {
+      return this.model.increaseBet();
     },
-    "click .dec-button": function() {
-      var currBet;
-      currBet = this.model.get('bet');
-      currBet -= 5;
-      if (currBet < 5) {
-        currBet = 5;
-      }
-      return this.model.set('bet', currBet);
+    "click .dec-button.active": function() {
+      return this.model.decreaseBet();
     }
   };
 

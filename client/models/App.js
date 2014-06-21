@@ -7,6 +7,8 @@ window.App = (function(_super) {
   __extends(App, _super);
 
   function App() {
+    this.increaseBet = __bind(this.increaseBet, this);
+    this.decreaseBet = __bind(this.decreaseBet, this);
     this.dealerScore = __bind(this.dealerScore, this);
     this.adjustScore = __bind(this.adjustScore, this);
     this.dealHand = __bind(this.dealHand, this);
@@ -34,9 +36,10 @@ window.App = (function(_super) {
     return this.get('playerHand').on('checkWinner', (function(_this) {
       return function() {
         var dealerScore, playerScore;
+        _this.dealerScore();
         playerScore = _this.getScore(_this.get('playerHand').scores());
         dealerScore = _this.getScore(_this.get('dealerHand').scores());
-        if (playerScore <= 21 && playerScore > dealerScore) {
+        if ((playerScore <= 21 && playerScore > dealerScore) || dealerScore > 21) {
           _this.set('myScore', _this.get('myScore') + 1);
           _this.adjustScore('win');
         } else {
@@ -44,7 +47,9 @@ window.App = (function(_super) {
           _this.adjustScore('lose');
         }
         return setTimeout((function() {
-          return _this.dealHand();
+          _this.dealHand();
+          $('.inc-button').addClass('active');
+          return $('.dec-button').addClass('active');
         }), 2000);
       };
     })(this));
@@ -78,9 +83,31 @@ window.App = (function(_super) {
     currScore = this.getScore(this.get('dealerHand').scores());
     _results = [];
     while (currScore < 17) {
+      this.get('dealerHand').hit();
       _results.push(currScore = this.getScore(this.get('dealerHand').scores()));
     }
     return _results;
+  };
+
+  App.prototype.decreaseBet = function() {
+    var currBet;
+    currBet = this.get('bet');
+    currBet -= 5;
+    if (currBet < 5) {
+      currBet = 5;
+    }
+    return this.set('bet', currBet);
+  };
+
+  App.prototype.increaseBet = function() {
+    var currBet, totMoney;
+    currBet = this.get('bet');
+    totMoney = this.get('money');
+    currBet += 5;
+    if (currBet > totMoney) {
+      currBet = totMoney;
+    }
+    return this.set('bet', currBet);
   };
 
   return App;

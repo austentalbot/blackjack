@@ -18,9 +18,10 @@ class window.App extends Backbone.Model
       @get('dealerHand').models[0].flip()
 
     @get('playerHand').on 'checkWinner', =>
+      @dealerScore()
       playerScore=@getScore(@get('playerHand').scores())
       dealerScore=@getScore(@get('dealerHand').scores())
-      if playerScore<=21 and playerScore > dealerScore
+      if (playerScore<=21 and playerScore > dealerScore) || dealerScore>21
         @set('myScore', @get('myScore')+1)
         @adjustScore('win')
       else
@@ -29,6 +30,8 @@ class window.App extends Backbone.Model
       # Redeal
       setTimeout (=>
         @dealHand()
+        $('.inc-button').addClass('active')
+        $('.dec-button').addClass('active')
       ), 2000
 
   getScore: (scores) ->
@@ -53,9 +56,23 @@ class window.App extends Backbone.Model
   dealerScore: =>
     currScore=@getScore(@get('dealerHand').scores())
     while currScore < 17
-      #add card to dealer's hand
+      #add card to dealer's
+      @get('dealerHand').hit()
       currScore=@getScore(@get('dealerHand').scores())
 
+  decreaseBet: =>
+    currBet = @get 'bet'
+    currBet-=5
+    if currBet<5
+      currBet = 5
+    @set 'bet', currBet
 
+  increaseBet: =>
+    currBet = @get 'bet'
+    totMoney = @get 'money'
+    currBet+=5
+    if currBet>totMoney
+      currBet = totMoney
+    @set 'bet', currBet
 
 

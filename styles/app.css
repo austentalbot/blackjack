@@ -1,10 +1,11 @@
 .card {
   float: left;
-  border: solid 1px black;
-  width: 100px;
+  border: solid 1px #bdc3c7;
+  width: 120px;
   border-radius: 5px;
-  height: 140px;
+  height: 167px;
   margin-right: 20px;
+  margin-left: 20px;
 }
 
 .covered {
@@ -22,6 +23,10 @@ body {
   font-family: 'Lato';
   background: #e6f9f1;
 }
+
+.playerView {
+  margin-left: 20px;
+}
 .hand {
   height: 250px;
 }
@@ -34,6 +39,9 @@ body {
   background: #70D49A;
   height: 60px;
   width: 100%;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
 }
 .hit-button, .stand-button, .inc-button, .dec-button {
   font-size: 18px;

@@ -50,3 +50,12 @@ class window.App extends Backbone.Model
       #check if money is zero
       if (@get 'money') is 0 then @trigger 'noMoney'
 
+  dealerScore: =>
+    currScore=@getScore(@get('dealerHand').scores())
+    while currScore < 17
+      #add card to dealer's hand
+      currScore=@getScore(@get('dealerHand').scores())
+
+
+
+

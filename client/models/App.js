@@ -7,6 +7,7 @@ window.App = (function(_super) {
   __extends(App, _super);
 
   function App() {
+    this.dealerScore = __bind(this.dealerScore, this);
     this.adjustScore = __bind(this.adjustScore, this);
     this.dealHand = __bind(this.dealHand, this);
     return App.__super__.constructor.apply(this, arguments);
@@ -70,6 +71,16 @@ window.App = (function(_super) {
         return this.trigger('noMoney');
       }
     }
+  };
+
+  App.prototype.dealerScore = function() {
+    var currScore, _results;
+    currScore = this.getScore(this.get('dealerHand').scores());
+    _results = [];
+    while (currScore < 17) {
+      _results.push(currScore = this.getScore(this.get('dealerHand').scores()));
+    }
+    return _results;
   };
 
   return App;

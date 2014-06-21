@@ -21,12 +21,8 @@ window.Hand = (function(_super) {
   };
 
   Hand.prototype.stand = function() {
-    var result, results;
-    results = this.scores();
-    result = results.length === 1 ? results[0] : results[1] > 21 ? results[0] : results[1];
-    if (result <= 21) {
-      return this.trigger('incrementScore', this);
-    }
+    this.trigger('flipCard', this);
+    return this.trigger('checkWinner', this);
   };
 
   Hand.prototype.scores = function() {

@@ -9,7 +9,7 @@ window.AppView = (function(_super) {
     return AppView.__super__.constructor.apply(this, arguments);
   }
 
-  AppView.prototype.template = _.template('<button class="hit-button">Hit</button> <button class="stand-button">Stand</button> <div class="score"></div> <div class="player-hand-container"></div> <div class="dealer-hand-container"></div>');
+  AppView.prototype.template = _.template('<div class="buttons"> <div class="hit-button">Hit</div> <div class="stand-button">Stand</div> <div class="inc-button">Increase Bet $5</div> <div class="dec-button">Decrease Bet $5</div> <div class="bet"></div> </div> <div class="scores myScore"></div> <div class="scores dealerScore"></div> <div class="scores money"></div> <div class="player-hand-container"></div> <div class="dealer-hand-container"></div>');
 
   AppView.prototype.events = {
     "click .hit-button": function() {
@@ -17,12 +17,42 @@ window.AppView = (function(_super) {
     },
     "click .stand-button": function() {
       return this.model.get('playerHand').stand();
+    },
+    "click .inc-button": function() {
+      var currBet, totMoney;
+      currBet = this.model.get('bet');
+      totMoney = this.model.get('money');
+      currBet += 5;
+      if (currBet > totMoney) {
+        currBet = totMoney;
+      }
+      return this.model.set('bet', currBet);
+    },
+    "click .dec-button": function() {
+      var currBet;
+      currBet = this.model.get('bet');
+      currBet -= 5;
+      if (currBet < 5) {
+        currBet = 5;
+      }
+      return this.model.set('bet', currBet);
     }
   };
 
   AppView.prototype.initialize = function() {
     this.render();
-    return this.model.on('change:score', (function(_this) {
+    this.model.on('noMoney', (function(_this) {
+      return function() {
+        console.log('poor!');
+        $('body').append('<div class="lose"> GAME OVER </div>');
+        return $('.lose').css({
+          top: $('body').height() * .2,
+          left: $('body').width() * .2,
+          position: 'absolute'
+        });
+      };
+    })(this));
+    return this.model.on('change', (function(_this) {
       return function() {
         return _this.render();
       };
@@ -32,7 +62,10 @@ window.AppView = (function(_super) {
   AppView.prototype.render = function() {
     this.$el.children().detach();
     this.$el.html(this.template());
-    this.$('.score').text(this.model.get('score'));
+    this.$('.myScore').text('Hands won: ' + this.model.get('myScore'));
+    this.$('.dealerScore').text('Hands lost: ' + this.model.get('dealerScore'));
+    this.$('.money').text('Money: $' + this.model.get('money'));
+    this.$('.bet').text('Bet: $' + this.model.get('bet'));
     this.$('.player-hand-container').html(new HandView({
       collection: this.model.get('playerHand')
     }).el);

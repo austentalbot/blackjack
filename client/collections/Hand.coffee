@@ -8,19 +8,11 @@ class window.Hand extends Backbone.Collection
     @add(@deck.pop()).last()
 
   # Implement stand function
-  # If standing, round ends, check score
+  # If standing, round ends, flip dealer card, check score
   # Score is highest score unless that score is over 21
   stand: ->
-    results = @scores()
-    result = if results.length ==1
-      results[0]
-    else if results[1] > 21
-      results[0]
-    else
-      results[1]
-
-    if result<=21 then @trigger('incrementScore', this)
-    # if result<=21 then console.log result
+    @trigger('flipCard', this)
+    @trigger('checkWinner', this)
 
   scores: ->
     # The scores are an array of potential scores.

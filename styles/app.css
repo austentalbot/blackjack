@@ -8,9 +8,79 @@
 }
 
 .covered {
-  background-color: black;
+  /*background-color: black;*/
+  /*content:url("http://payload106.cargocollective.com/1/1/41188/4423622/cardback.jpg");*/
+  content:url("../img/card-back.png");
 }
 
 .hand {
   overflow: auto;
 }
+
+body {
+  margin: 0px;
+  font-family: 'Lato';
+  background: #bdc3c7;
+}
+.hand {
+  height: 250px;
+}
+.scores {
+  font-size: 20px;
+  font-weight: bold;
+}
+.buttons {
+  margin: 0;
+  background: #70D49A;
+  height: 60px;
+  width: 100%;
+}
+.hit-button, .stand-button, .inc-button, .dec-button {
+  font-size: 18px;
+  color: white;
+  position: absolute;
+  text-align: center;
+  vertical-align: middle;
+  background: #27ae60;
+  line-height: 50px;
+  width: 130px;
+  height: 50px;
+}
+
+.hit-button:active, .stand-button:active, .inc-button:active, .dec-button:active {
+  background-color: #2ecc71;
+}
+
+.hit-button {
+  top: 5px;
+  left: 5px;
+}
+
+.stand-button {
+  top: 5px;
+  left: 155px;
+}
+.inc-button {
+  top: 5px;
+  left: 355px;
+}
+.dec-button {
+  top: 5px;
+  left: 505px;
+}
+
+.bet {
+  font-size: 30px;
+  color: white;
+  position: absolute;
+  top: 10px;
+  left: 705px;
+}
+
+.lose {
+  color: #c0392b;
+  font-size: 150px;
+  position: absolute;
+  font-weight: bold;
+}
+

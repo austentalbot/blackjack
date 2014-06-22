@@ -9,15 +9,15 @@ window.AppView = (function(_super) {
     return AppView.__super__.constructor.apply(this, arguments);
   }
 
-  AppView.prototype.template = _.template('<div class="buttons"> <div class="hit-button">Hit</div> <div class="stand-button">Stand</div> <div class="inc-button active">Increase Bet $5</div> <div class="dec-button active">Decrease Bet $5</div> <div class="bet"></div> </div> <div class="playerView"> <div class="scores myScore"></div> <div class="scores dealerScore"></div> <div class="scores money"></div> <div class="player-hand-container"></div> <div class="dealer-hand-container"></div> </div>');
+  AppView.prototype.template = _.template('<div class="buttons"> <div class="hit-button active">Hit</div> <div class="stand-button active">Stand</div> <div class="inc-button active">Increase Bet $5</div> <div class="dec-button active">Decrease Bet $5</div> <div class="bet"></div> </div> <div class="playerView"> <div class="scores myScore"></div> <div class="scores dealerScore"></div> <div class="scores money"></div> <div class="player-hand-container"></div> <div class="dealer-hand-container"></div> </div>');
 
   AppView.prototype.events = {
-    "click .hit-button": function() {
+    "click .hit-button.active": function() {
       $('.inc-button').removeClass('active');
       $('.dec-button').removeClass('active');
       return this.model.get('playerHand').hit();
     },
-    "click .stand-button": function() {
+    "click .stand-button.active": function() {
       $('.inc-button').removeClass('active');
       $('.dec-button').removeClass('active');
       return this.model.get('playerHand').stand();
@@ -27,6 +27,14 @@ window.AppView = (function(_super) {
     },
     "click .dec-button.active": function() {
       return this.model.decreaseBet();
+    },
+    "change @model.get 'money'": function() {
+      if ((AppView.model.get('money')) <= 0) {
+        $('.hit-button').removeClass('active');
+        $('.stand-button').removeClass('active');
+        $('.inc-button').removeClass('active');
+        return $('.dec-button').removeClass('active');
+      }
     }
   };
 
@@ -34,18 +42,26 @@ window.AppView = (function(_super) {
     this.render();
     this.model.on('noMoney', (function(_this) {
       return function() {
-        console.log('poor!');
+        $('.hit-button').removeClass('active');
+        $('.stand-button').removeClass('active');
+        $('.inc-button').removeClass('active');
+        $('.dec-button').removeClass('active');
         $('body').append('<div class="lose"> GAME OVER </div>');
-        return $('.lose').css({
+        $('.lose').css({
           top: $('body').height() * .2,
           left: $('body').width() * .2,
           position: 'absolute'
         });
+        return console.log('poor!');
       };
     })(this));
     return this.model.on('change', (function(_this) {
       return function() {
-        return _this.render();
+        _this.render();
+        if ((_this.model.get('money')) <= 0) {
+          $('.hit-button').removeClass('active');
+          return $('.stand-button').removeClass('active');
+        }
       };
     })(this));
   };

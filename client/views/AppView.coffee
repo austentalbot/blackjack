@@ -2,7 +2,7 @@ class window.AppView extends Backbone.View
 
   template: _.template '
     <div class="buttons">
-      <div class="hit-button">Hit</div> <div class="stand-button">Stand</div> <div class="inc-button active">Increase Bet $5</div> <div class="dec-button active">Decrease Bet $5</div> <div class="bet"></div>
+      <div class="hit-button active">Hit</div> <div class="stand-button active">Stand</div> <div class="inc-button active">Increase Bet $5</div> <div class="dec-button active">Decrease Bet $5</div> <div class="bet"></div>
     </div>
     <div class="playerView">
       <div class="scores myScore"></div>
@@ -14,11 +14,11 @@ class window.AppView extends Backbone.View
   '
 
   events:
-    "click .hit-button": ->
+    "click .hit-button.active": ->
       $('.inc-button').removeClass('active')
       $('.dec-button').removeClass('active')
       @model.get('playerHand').hit()
-    "click .stand-button": ->
+    "click .stand-button.active": ->
       $('.inc-button').removeClass('active')
       $('.dec-button').removeClass('active')
       @model.get('playerHand').stand()
@@ -26,20 +26,33 @@ class window.AppView extends Backbone.View
       @model.increaseBet()
     "click .dec-button.active": ->
       @model.decreaseBet()
+    "change @model.get 'money'": =>
+      if (@model.get 'money')<=0
+        $('.hit-button').removeClass('active')
+        $('.stand-button').removeClass('active')
+        $('.inc-button').removeClass('active')
+        $('.dec-button').removeClass('active')        
 
 
   initialize: ->
     @render()
 
     @model.on 'noMoney', =>
-      console.log('poor!')
+      $('.hit-button').removeClass('active')
+      $('.stand-button').removeClass('active')
+      $('.inc-button').removeClass('active')
+      $('.dec-button').removeClass('active')
       $('body').append('<div class="lose"> GAME OVER </div>')
       $('.lose').css({top: $('body').height()*.2, left: $('body').width()*.2, position:'absolute'})
+      console.log('poor!')
 
       
     @model.on 'change', =>
       @render()
-
+      # remove active if player has money
+      if (@model.get 'money') <= 0
+        $('.hit-button').removeClass('active')
+        $('.stand-button').removeClass('active')     
 
 
   render: ->
@@ -51,3 +64,4 @@ class window.AppView extends Backbone.View
     @$('.bet').text('Bet: $'+@model.get 'bet')
     @$('.player-hand-container').html new HandView(collection: @model.get 'playerHand').el
     @$('.dealer-hand-container').html new HandView(collection: @model.get 'dealerHand').el
+ 

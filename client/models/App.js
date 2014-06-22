@@ -9,7 +9,7 @@ window.App = (function(_super) {
   function App() {
     this.increaseBet = __bind(this.increaseBet, this);
     this.decreaseBet = __bind(this.decreaseBet, this);
-    this.dealerScore = __bind(this.dealerScore, this);
+    this.dealerPlay = __bind(this.dealerPlay, this);
     this.adjustScore = __bind(this.adjustScore, this);
     this.dealHand = __bind(this.dealHand, this);
     return App.__super__.constructor.apply(this, arguments);
@@ -26,6 +26,10 @@ window.App = (function(_super) {
   };
 
   App.prototype.dealHand = function() {
+    var deck;
+    if ((this.get('deck')).length <= 10) {
+      this.set('deck', deck = new Deck());
+    }
     this.set('playerHand', this.get('deck').dealPlayer());
     this.set('dealerHand', this.get('deck').dealDealer());
     this.get('playerHand').on('flipCard', (function(_this) {
@@ -36,21 +40,25 @@ window.App = (function(_super) {
     return this.get('playerHand').on('checkWinner', (function(_this) {
       return function() {
         var dealerScore, playerScore;
-        _this.dealerScore();
         playerScore = _this.getScore(_this.get('playerHand').scores());
+        if (playerScore <= 21) {
+          _this.dealerPlay();
+        }
         dealerScore = _this.getScore(_this.get('dealerHand').scores());
-        if ((playerScore <= 21 && playerScore > dealerScore) || dealerScore > 21) {
+        if (playerScore <= 21 && ((playerScore > dealerScore) || dealerScore > 21)) {
           _this.set('myScore', _this.get('myScore') + 1);
           _this.adjustScore('win');
         } else {
           _this.set('dealerScore', _this.get('dealerScore') + 1);
           _this.adjustScore('lose');
         }
-        return setTimeout((function() {
-          _this.dealHand();
-          $('.inc-button').addClass('active');
-          return $('.dec-button').addClass('active');
-        }), 2000);
+        if ((_this.get('money')) > 0) {
+          return setTimeout((function() {
+            _this.dealHand();
+            $('.inc-button').addClass('active');
+            return $('.dec-button').addClass('active');
+          }), 2000);
+        }
       };
     })(this));
   };
@@ -73,12 +81,13 @@ window.App = (function(_super) {
       this.set('money', (this.get('money')) - (this.get('bet')));
       this.set('bet', 5);
       if ((this.get('money')) === 0) {
-        return this.trigger('noMoney');
+        this.trigger('noMoney');
+        return this.set('bet', 0);
       }
     }
   };
 
-  App.prototype.dealerScore = function() {
+  App.prototype.dealerPlay = function() {
     var currScore, _results;
     currScore = this.getScore(this.get('dealerHand').scores());
     _results = [];
@@ -93,8 +102,10 @@ window.App = (function(_super) {
     var currBet;
     currBet = this.get('bet');
     currBet -= 5;
-    if (currBet < 5) {
+    if (currBet < 5 && (this.get('money')) > 0) {
       currBet = 5;
+    } else if ((this.get('money')) === 0) {
+      currBet = 0;
     }
     return this.set('bet', currBet);
   };
@@ -106,6 +117,9 @@ window.App = (function(_super) {
     currBet += 5;
     if (currBet > totMoney) {
       currBet = totMoney;
+    }
+    if ((this.get('money')) === 0) {
+      currBet = 0;
     }
     return this.set('bet', currBet);
   };

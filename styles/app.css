@@ -51,8 +51,9 @@ body {
   vertical-align: middle;
   background: #27ae60;
   line-height: 50px;
-  width: 130px;
+  width: 135px;
   height: 50px;
+  border-radius: 5px;
 }
 
 .hit-button:active, .stand-button:active, .inc-button:active, .dec-button:active {
